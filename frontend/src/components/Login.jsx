@@ -4,6 +4,14 @@ import { auth, googleProvider } from "../../firebase";
 export default function Login({ onLogin }) {
   async function handleGoogleLogin() {
     const result = await signInWithPopup(auth, googleProvider);
+      const user = result.user;
+
+  // 🔑 THIS IS THE TOKEN YOU NEED
+  const idToken = await user.getIdToken();
+
+  console.log("ID TOKEN:", idToken);
+
+
     onLogin(result.user);
   }
 

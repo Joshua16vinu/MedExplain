@@ -1,21 +1,44 @@
-from flask import Flask
+# from flask import Flask
+# from flask_cors import CORS
+# from dotenv import load_dotenv
+# from pathlib import Path
+
+# env_path = Path(__file__).resolve().parent / ".env"
+# load_dotenv(dotenv_path=env_path)
+
+# from routes.summarize import summarize_bp
+
+# app = Flask(__name__)
+# CORS(app)
+
+# app.register_blueprint(summarize_bp)
+
+# @app.route("/health")
+# def health():
+#     return "Backend running"
+
+# if __name__ == "__main__":
+#     app.run(debug=True)
+
+from flask import Flask, jsonify
 from flask_cors import CORS
-from dotenv import load_dotenv
-from pathlib import Path
 
-env_path = Path(__file__).resolve().parent.parent / ".env"
-load_dotenv(dotenv_path=env_path)
+import config
+import firebase_admin_init
 
-from routes.summarize import summarize_bp
+from routes.auth_routes import auth_bp
+from routes.health_routes import health_bp
+from utils.exception import AppException
 
 app = Flask(__name__)
 CORS(app)
 
-app.register_blueprint(summarize_bp)
+app.register_blueprint(auth_bp)
+app.register_blueprint(health_bp)
 
-@app.route("/health")
-def health():
-    return "Backend running"
+@app.errorhandler(AppException)
+def handle_app_exception(e):
+    return jsonify(e.to_dict()), e.status_code
 
 if __name__ == "__main__":
     app.run(debug=True)
