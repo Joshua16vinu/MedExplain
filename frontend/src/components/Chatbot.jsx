@@ -2,12 +2,14 @@ import { useState, useEffect, useRef } from "react";
 import { createChatSession, sendChatMessage, getChatSession } from "../services/api";
 import "./Chatbot.css";
 
-export default function Chatbot({ user, reportName, reportType, onClose }) {
+export default function Chatbot({ user, reportName, reportType,   onClose }) {
   const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [sessionId, setSessionId] = useState(null);
   const [initializing, setInitializing] = useState(true);
+  const [language, setLanguage] = useState("en");
+
   const messagesEndRef = useRef(null);
   const chatContainerRef = useRef(null);
 
@@ -27,7 +29,7 @@ export default function Chatbot({ user, reportName, reportType, onClose }) {
 
     try {
       setInitializing(true);
-      const session = await createChatSession(reportName, reportType, user);
+      const session = await createChatSession(reportName, reportType, language,user);
       setSessionId(session.sessionId);
       setMessages(session.messages || []);
     } catch (error) {
@@ -63,7 +65,7 @@ export default function Chatbot({ user, reportName, reportType, onClose }) {
     setLoading(true);
 
     try {
-      const response = await sendChatMessage(sessionId, userMessage, user);
+      const response = await sendChatMessage(sessionId, userMessage,language, user);
       
       // Add bot response
       const botMessage = {
@@ -103,23 +105,62 @@ export default function Chatbot({ user, reportName, reportType, onClose }) {
           <div className="loading-spinner"></div>
           <p>Initializing chat...</p>
         </div>
+      
+
       </div>
     );
   }
 
   return (
     <div className="chatbot-container">
-      <div className="chatbot-header">
+      {/* <div className="chatbot-header">
+
         <div className="chatbot-header-info">
           <h3>Chat about your report</h3>
           <p className="chatbot-subtitle">
             Ask questions about: {reportName} ({reportType})
           </p>
         </div>
+         <select
+  value={language}
+  onChange={(e) => setLanguage(e.target.value)}
+  className="chatbot-language-select"
+>
+  <option value="en">English</option>
+  <option value="hi">Hindi</option>
+  <option value="mr">Marathi</option>
+</select>
         <button className="close-btn" onClick={onClose} title="Close chat">
           ×
         </button>
-      </div>
+       
+
+      </div> */}
+<div className="chatbot-header">
+  <div className="chatbot-header-info">
+    <h3>Chat about your report</h3>
+    <p className="chatbot-subtitle">
+      Ask questions about: {reportName} ({reportType})
+    </p>
+  </div>
+
+  <div className="chatbot-header-actions">
+   
+
+    <button className="close-btn" onClick={onClose} title="Close chat">
+      ×
+    </button>
+     <select
+      value={language}
+      onChange={(e) => setLanguage(e.target.value)}
+      className="chatbot-language-select"
+    >
+      <option value="en">English</option>
+      <option value="hi">Hindi</option>
+      <option value="mr">Marathi</option>
+    </select>
+  </div>
+</div>
 
       <div className="chatbot-messages" ref={chatContainerRef}>
         {messages.length === 0 ? (
@@ -188,6 +229,7 @@ export default function Chatbot({ user, reportName, reportType, onClose }) {
           className="chatbot-input"
           disabled={loading || !sessionId}
         />
+        
         <button
           type="submit"
           className="chatbot-send-btn"

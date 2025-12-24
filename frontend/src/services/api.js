@@ -176,7 +176,7 @@ export async function getComparison(oldName, oldType, newName, newType, user) {
  * @param {string} reportName - Name of the report
  * @param {string} reportType - Type of the report
  */
-export async function createChatSession(reportName, reportType, user) {
+export async function createChatSession(reportName, reportType,  language, user) {
   const response = await authenticatedFetch(
     "/chatbot/session",
     {
@@ -187,6 +187,7 @@ export async function createChatSession(reportName, reportType, user) {
       body: JSON.stringify({
         reportName,
         reportType,
+         language, 
       }),
     },
     user
@@ -213,8 +214,9 @@ export async function getChatSession(sessionId, user) {
  * Send a message to the chatbot
  * @param {string} sessionId - Session ID
  * @param {string} message - User's message
+ * @param {string} language
  */
-export async function sendChatMessage(sessionId, message, user) {
+export async function sendChatMessage(sessionId, message, language,user) {
   const response = await authenticatedFetch(
     "/chatbot/message",
     {
@@ -225,6 +227,7 @@ export async function sendChatMessage(sessionId, message, user) {
       body: JSON.stringify({
         sessionId,
         message,
+        language
       }),
     },
     user

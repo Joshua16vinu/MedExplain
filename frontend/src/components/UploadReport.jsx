@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { use, useState } from "react";
 import { uploadReport } from "../services/api";
 
 export default function UploadReport({ user, onResult, onUploadSuccess }) {
@@ -6,6 +6,8 @@ export default function UploadReport({ user, onResult, onUploadSuccess }) {
   const [reportType, setReportType] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  // const [language, setlanguage]=useState("english");
+const [language, setLanguage] = useState("en");
 
   async function handleUpload() {
     if (!file || !user) {
@@ -22,7 +24,7 @@ export default function UploadReport({ user, onResult, onUploadSuccess }) {
     setError(null);
 
     try {
-      const result = await uploadReport(file, reportType, "en", user);
+      const result = await uploadReport(file, reportType, language, user);
       // Pass both summary and report info
       onResult({
         summary: result.summary,
@@ -102,6 +104,21 @@ export default function UploadReport({ user, onResult, onUploadSuccess }) {
           </select>
         </label>
       </div>
+      <div className="report-type-selector">
+  <label>
+    Language:
+    <select
+      value={language}
+      onChange={(e) => setLanguage(e.target.value)}
+      className="type-select"
+    >
+      <option value="en">English</option>
+      <option value="hi">Hindi</option>
+      <option value="mr">Marathi</option>
+    </select>
+  </label>
+</div>
+
       
       <button 
         className="upload-btn" 

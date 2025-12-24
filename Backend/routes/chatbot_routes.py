@@ -20,7 +20,8 @@ def create_session():
     data = request.json
     report_name = data.get("reportName")
     report_type = data.get("reportType")
-    
+    language = data.get("language", "en")  # 👈 ADD
+
     if not report_name or not report_type:
         return {"error": "reportName and reportType required"}, 400
     
@@ -49,7 +50,8 @@ def create_session():
         user_id=g.user["uid"],
         report_id=report.get("id"),
         report_name=report.get("reportName"),
-        report_type=report.get("reportType")
+        report_type=report.get("reportType"),
+        language=language
     )
     
     return success_response({
@@ -87,7 +89,8 @@ def send_message():
     data = request.json
     session_id = data.get("sessionId")
     user_message = data.get("message")
-    
+    language = data.get("language", "en")  # 👈 ADD THIS
+
     if not session_id or not user_message:
         return {"error": "sessionId and message required"}, 400
     
@@ -116,7 +119,7 @@ def send_message():
     
     # Generate chatbot response
     try:
-        bot_response = generate_chat_response(user_message, report_summary, messages)
+        bot_response = generate_chat_response(user_message, report_summary, messages,language)
     except Exception as e:
         return {"error": f"Failed to generate response: {str(e)}"}, 500
     
