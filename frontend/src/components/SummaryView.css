@@ -1,7 +1,8 @@
 .summary-card {
-  margin-top: 2rem;
+  margin: 2rem auto 0 auto;
   padding: 2rem 2.25rem;
   max-width: 800px;
+  width: 100%;
   background: #ffffff;
   border-radius: 14px;
   box-shadow: 0 18px 40px rgba(15, 23, 42, 0.12);
@@ -11,6 +12,49 @@
   backdrop-filter: blur(4px);
   max-height: 70vh;
   overflow-y: auto;
+  text-align: left;
+}
+
+.summary-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.summary-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.chatbot-toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1rem;
+  background: linear-gradient(135deg, #059669 0%, #047857 50%, #065f46 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(5, 150, 105, 0.2);
+}
+
+.chatbot-toggle-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
+  background: linear-gradient(135deg, #10b981 0%, #059669 50%, #047857 100%);
+}
+
+.chatbot-toggle-btn svg {
+  flex-shrink: 0;
 }
 
 /* Headings */

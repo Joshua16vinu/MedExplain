@@ -1,25 +1,41 @@
 import { useState } from "react";
 import { uploadReport } from "../services/api";
-import { hashFile } from "../utils/hashFile";
 
-export default function UploadReport({ user, onResult }) {
+export default function UploadReport({ user, onResult, onUploadSuccess }) {
   const [file, setFile] = useState(null);
+  const [reportType, setReportType] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   async function handleUpload() {
     if (!file || !user) {
-      alert("User not logged in or file missing");
+      setError("User not logged in or file missing");
+      return;
+    }
+
+    if (!reportType) {
+      setError("Please select a report type");
       return;
     }
 
     setLoading(true);
+    setError(null);
 
     try {
-      const hash = await hashFile(file);
-      const result = await uploadReport(file, hash, user.uid);
-      onResult(result.summary);
+      const result = await uploadReport(file, reportType, "en", user);
+      // Pass both summary and report info
+      onResult({
+        summary: result.summary,
+        reportName: file.name.replace(/\.[^/.]+$/, "").toLowerCase(),
+        reportType: reportType
+      });
+      
+      // Notify parent component that upload was successful (to refresh report list)
+      if (onUploadSuccess) {
+        onUploadSuccess();
+      }
     } catch (err) {
-      alert(err.message);
+      setError(err.message);
       console.error(err);
     } finally {
       setLoading(false);
@@ -31,12 +47,21 @@ export default function UploadReport({ user, onResult }) {
       <h2>Upload Medical Report</h2>
       <p className="subtitle">Select a PDF file to generate an easy-to-understand summary</p>
       
+      {error && (
+        <div className="error-message">
+          {error}
+        </div>
+      )}
+
       <div className="file-upload-wrapper">
         <input 
           id="file-input"
           type="file" 
           accept=".pdf"
-          onChange={e => setFile(e.target.files[0])}
+          onChange={e => {
+            setFile(e.target.files[0]);
+            setError(null);
+          }}
           className="file-input-hidden"
         />
         <label htmlFor="file-input" className="file-input-label">
@@ -55,11 +80,33 @@ export default function UploadReport({ user, onResult }) {
           </div>
         )}
       </div>
+
+      <div className="report-type-selector">
+        <label>
+          Report Type:
+          <select
+            value={reportType}
+            onChange={(e) => {
+              setReportType(e.target.value);
+              setError(null);
+            }}
+            className="type-select"
+          >
+            <option value="">Select report type...</option>
+            <option value="CBC">CBC (Complete Blood Count)</option>
+            <option value="LIPID">Lipid Profile</option>
+            <option value="LFT">LFT (Liver Function Test)</option>
+            <option value="KFT">KFT (Kidney Function Test)</option>
+            <option value="THYROID">Thyroid Function Test</option>
+            <option value="OTHER">Other</option>
+          </select>
+        </label>
+      </div>
       
       <button 
         className="upload-btn" 
         onClick={handleUpload} 
-        disabled={loading || !file}
+        disabled={loading || !file || !reportType}
       >
         {loading ? (
           <>
