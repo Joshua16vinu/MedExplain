@@ -9,7 +9,7 @@ export default function Login({ onLogin }) {
   // 🔑 THIS IS THE TOKEN YOU NEED
   const idToken = await user.getIdToken();
 
-  console.log("ID TOKEN:", idToken);
+  // console.log("ID TOKEN:", idToken);
 
 
     onLogin(result.user);

@@ -1,4 +1,8 @@
 import { useState, useEffect, useRef } from "react";
+import ReactMarkdown from "react-markdown";
+import rehypeSanitize from "rehype-sanitize";
+
+
 import { createChatSession, sendChatMessage, getChatSession } from "../services/api";
 import "./Chatbot.css";
 
@@ -190,7 +194,11 @@ export default function Chatbot({ user, reportName, reportType,   onClose }) {
                   </div>
                 )}
                 <div className="message-bubble">
-                  <p>{message.content}</p>
+                  {/* <p>{message.content}</p> */}
+                  <ReactMarkdown rehypePlugins={[rehypeSanitize]}>
+  {message.content}
+</ReactMarkdown>
+
                   {message.timestamp && (
                     <span className="message-time">{formatTime(message.timestamp)}</span>
                   )}
