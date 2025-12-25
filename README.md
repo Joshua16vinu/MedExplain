@@ -20,7 +20,7 @@ MedExplain is an open-source platform designed to improve medical information ac
 - Python 3.8 or higher
 - pip (Python package manager)
 - Node.js and npm (for frontend development)
-- MongoDB (or compatible NoSQL database)
+- Firestore database (or compatible NoSQL database)
 - Modern web browser (for UI)
 
 ## Installation
@@ -43,33 +43,32 @@ Follow these steps to set up MedExplain on your local machine:
 3. **Configure environment variables:**
    - Copy `.env.example` to `.env` and fill in the required values (database URL, secret keys, API keys).
 
-4. **Run backend migrations (if any):**
-   ```bash
-   python manage.py migrate
-   ```
 
-5. **Set up the frontend:**
+
+4. **Set up the frontend:**
    ```bash
    cd frontend
    npm install
    npm run build
    ```
 
-6. **Start the backend server:**
+5. **Start the backend server:**
    ```bash
-   python manage.py runserver
+   cd backend
+   venv\scripts\activate
+   python app.py
    ```
 
-7. **Start the frontend (development mode):**
+6. **Start the frontend (development mode):**
    ```bash
    cd frontend
-   npm start
+   npm run dev
    ```
 
 ## Usage
 
 - **Web Interface:**  
-  Open your browser and navigate to `http://localhost:3000`. Register or log in to start uploading and analyzing medical documents.
+  Open your browser and navigate to `http://localhost:5173`. Register or log in to start uploading and analyzing medical documents.
 - **API Access:**  
   Use the API endpoints to programmatically upload documents, retrieve explanations, and manage your data.
 - **Document Upload:**  
