@@ -247,3 +247,24 @@ export async function checkHealth() {
   const response = await fetch(`${API_BASE_URL}/health`);
   return response.text();
 }
+
+
+export const sendVoiceMessage = async (sessionId, audioBase64, language, gender, user) => {
+  const token = await user.getIdToken();
+  const response = await fetch(`${API_BASE_URL}/voice-chatbot/voice-message`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({
+      sessionId,
+      audio: audioBase64,
+      language,
+      gender
+    }),
+  });
+  
+  if (!response.ok) throw new Error("Voice message failed");
+  return await response.json();
+};
