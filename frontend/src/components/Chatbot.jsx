@@ -943,112 +943,231 @@ export default function Chatbot({ user, reportName, reportType, onClose }) {
     scrollToBottom();
   }, [messages]);
 
+
+  // Add this after all your useState declarations
+const showReportAlert = () => {
+  alert(
+    "⚠️ Unable to open chatbot right now.\n\n" +
+    "Please wait a moment and try again from 'My Reports' section.\n\n" +
+    "The report is being processed and will be ready shortly."
+  );
+};
+  // const initializeSession = async () => {
+  //   if (!reportName || !reportType) {
+  //     setInitializing(false);
+  //     return;
+  //   }
+
+  //   try {
+  //     setInitializing(true);
+  //     setInitError(null);
+  //     console.log("Creating session for:", { reportName, reportType });
+      
+  //     let session = null;
+  //     let attempts = 0;
+  //     const maxAttempts = 5;
+      
+  //     while (attempts < maxAttempts && !session) {
+  //       try {
+  //         session = await createChatSession(reportName, reportType, language, user);
+  //         if (session && session.sessionId) {
+  //           break;
+  //         }
+  //       } catch (err) {
+  //         console.log(`Attempt ${attempts + 1} failed, retrying...`);
+  //         if (attempts < maxAttempts - 1) {
+  //           await new Promise(resolve => setTimeout(resolve, 1000 * (attempts + 1)));
+  //         }
+  //       }
+  //       attempts++;
+  //     }
+      
+  //     if (!session || !session.sessionId) {
+  //       throw new Error("Unable to create session after retries");
+  //     }
+      
+  //     setSessionId(session.sessionId);
+  //     setMessages(session.messages || []);
+  //     hasShownError.current = false;
+  //   } catch (error) {
+  //     console.error("Failed to initialize chat session:", error);
+  //     setInitError("Chat is initializing. Please wait a moment and try sending a message.");
+  //   } finally {
+  //     setInitializing(false);
+  //   }
+  // };
+
+
   const initializeSession = async () => {
-    if (!reportName || !reportType) {
-      setInitializing(false);
-      return;
-    }
+  if (!reportName || !reportType) {
+    setInitializing(false);
+    return;
+  }
 
-    try {
-      setInitializing(true);
-      setInitError(null);
-      console.log("Creating session for:", { reportName, reportType });
-      
-      let session = null;
-      let attempts = 0;
-      const maxAttempts = 5;
-      
-      while (attempts < maxAttempts && !session) {
-        try {
-          session = await createChatSession(reportName, reportType, language, user);
-          if (session && session.sessionId) {
-            break;
-          }
-        } catch (err) {
-          console.log(`Attempt ${attempts + 1} failed, retrying...`);
-          if (attempts < maxAttempts - 1) {
-            await new Promise(resolve => setTimeout(resolve, 1000 * (attempts + 1)));
-          }
+  try {
+    setInitializing(true);
+    setInitError(null);
+    console.log("Creating session for:", { reportName, reportType });
+    
+    let session = null;
+    let attempts = 0;
+    const maxAttempts = 5;
+    
+    while (attempts < maxAttempts && !session) {
+      try {
+        session = await createChatSession(reportName, reportType, language, user);
+        if (session && session.sessionId) {
+          break;
         }
-        attempts++;
+      } catch (err) {
+        console.log(`Attempt ${attempts + 1} failed, retrying...`);
+        if (attempts < maxAttempts - 1) {
+          await new Promise(resolve => setTimeout(resolve, 1000 * (attempts + 1)));
+        }
       }
-      
-      if (!session || !session.sessionId) {
-        throw new Error("Unable to create session after retries");
-      }
-      
-      setSessionId(session.sessionId);
-      setMessages(session.messages || []);
-      hasShownError.current = false;
-    } catch (error) {
-      console.error("Failed to initialize chat session:", error);
-      setInitError("Chat is initializing. Please wait a moment and try sending a message.");
-    } finally {
-      setInitializing(false);
+      attempts++;
     }
-  };
-
+    
+    if (!session || !session.sessionId) {
+      // ✅ ADD THIS: Show alert and close chatbot
+      showReportAlert();
+      onClose(); // Close the chatbot
+      throw new Error("Unable to create session after retries");
+    }
+    
+    setSessionId(session.sessionId);
+    setMessages(session.messages || []);
+    hasShownError.current = false;
+  } catch (error) {
+    console.error("Failed to initialize chat session:", error);
+    setInitError("Unable to open chatbot. Please open from 'My Reports' section.");
+    
+    // ✅ ADD THIS: Show alert after 1 second if still no session
+    setTimeout(() => {
+      if (!sessionId) {
+        showReportAlert();
+        onClose(); // Close the chatbot
+      }
+    }, 1000);
+  } finally {
+    setInitializing(false);
+  }
+};
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  const handleSendMessage = async (e) => {
-    e.preventDefault();
+  // const handleSendMessage = async (e) => {
+  //   e.preventDefault();
     
-    if (!inputMessage.trim() || loading) {
-      return;
-    }
+  //   if (!inputMessage.trim() || loading) {
+  //     return;
+  //   }
 
-    if (!sessionId) {
-      setInitError("Initializing chat session...");
-      try {
-        const session = await createChatSession(reportName, reportType, language, user);
-        if (session && session.sessionId) {
-          setSessionId(session.sessionId);
-          setMessages(session.messages || []);
-          setInitError(null);
-        } else {
-          throw new Error("Failed to create session");
-        }
-      } catch (error) {
-        console.error("Failed to initialize session:", error);
-        setInitError("Failed to initialize chat. Please try again.");
-        return;
-      }
-    }
+  //   if (!sessionId) {
+  //     setInitError("Initializing chat session...");
+  //     try {
+  //       const session = await createChatSession(reportName, reportType, language, user);
+  //       if (session && session.sessionId) {
+  //         setSessionId(session.sessionId);
+  //         setMessages(session.messages || []);
+  //         setInitError(null);
+  //       } else {
+  //         throw new Error("Failed to create session");
+  //       }
+  //     } catch (error) {
+  //       console.error("Failed to initialize session:", error);
+  //       setInitError("Failed to initialize chat. Please try again.");
+  //       return;
+  //     }
+  //   }
 
-    const userMessage = inputMessage.trim();
-    setInputMessage("");
+  //   const userMessage = inputMessage.trim();
+  //   setInputMessage("");
     
-    const newUserMessage = {
-      role: "user",
-      content: userMessage,
-      timestamp: new Date(),
-    };
-    setMessages((prev) => [...prev, newUserMessage]);
+  //   const newUserMessage = {
+  //     role: "user",
+  //     content: userMessage,
+  //     timestamp: new Date(),
+  //   };
+  //   setMessages((prev) => [...prev, newUserMessage]);
 
-    setLoading(true);
-    setInitError(null);
+  //   setLoading(true);
+  //   setInitError(null);
 
-    try {
-      const response = await sendChatMessage(sessionId, userMessage, language, user);
+  //   try {
+  //     const response = await sendChatMessage(sessionId, userMessage, language, user);
       
-      const botMessage = {
-        role: "assistant",
-        content: response.response,
-        timestamp: new Date(),
-      };
-      setMessages((prev) => [...prev, botMessage]);
-    } catch (error) {
-      console.error("Failed to send message:", error);
-      setInitError("Failed to send message. Please try again.");
-      setMessages((prev) => prev.filter((msg, idx) => idx !== prev.length - 1));
-    } finally {
-      setLoading(false);
-    }
-  };
+  //     const botMessage = {
+  //       role: "assistant",
+  //       content: response.response,
+  //       timestamp: new Date(),
+  //     };
+  //     setMessages((prev) => [...prev, botMessage]);
+  //   } catch (error) {
+  //     console.error("Failed to send message:", error);
+  //     setInitError("Failed to send message. Please try again.");
+  //     setMessages((prev) => prev.filter((msg, idx) => idx !== prev.length - 1));
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   // Voice recording functions
+ 
+ const handleSendMessage = async (e) => {
+  e.preventDefault();
+  
+  if (!inputMessage.trim() || loading) {
+    return;
+  }
+
+  if (!sessionId) {
+    // ✅ CHANGE THIS: Show alert instead of trying to create session
+    showReportAlert();
+    return;
+  }
+
+  const userMessage = inputMessage.trim();
+  setInputMessage("");
+  
+  const newUserMessage = {
+    role: "user",
+    content: userMessage,
+    timestamp: new Date(),
+  };
+  setMessages((prev) => [...prev, newUserMessage]);
+
+  setLoading(true);
+  setInitError(null);
+
+  try {
+    const response = await sendChatMessage(sessionId, userMessage, language, user);
+    
+    const botMessage = {
+      role: "assistant",
+      content: response.response,
+      timestamp: new Date(),
+    };
+    setMessages((prev) => [...prev, botMessage]);
+  } catch (error) {
+    console.error("Failed to send message:", error);
+    
+    // ✅ ADD THIS: Check if session is invalid
+    if (error.message.includes("Session not found") || error.message.includes("404")) {
+      showReportAlert();
+      onClose();
+    } else {
+      alert( "⚠️ Unable to open chatbot right now.\n\n" +
+    "Please try again from 'My Reports' section.."
+    );
+      // setInitError("Failed to send message. Please try again.");
+      setMessages((prev) => prev.filter((msg, idx) => idx !== prev.length - 1));
+    }
+  } finally {
+    setLoading(false);
+  }
+};
   const startRecording = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -1106,82 +1225,173 @@ export default function Chatbot({ user, reportName, reportType, onClose }) {
     });
   };
 
+  // const sendVoiceMessageToBackend = async (audioBlob) => {
+  //   if (!sessionId) {
+  //     setInitError("Session not initialized");
+  //     return;
+  //   }
+
+  //   setLoading(true);
+  //   setInitError(null);
+
+  //   try {
+  //     // Stage 1: Converting audio
+  //     updateVoiceProcessing("converting", "Converting your voice to text...");
+      
+  //     const reader = new FileReader();
+  //     reader.readAsDataURL(audioBlob);
+      
+  //     reader.onloadend = async () => {
+  //       const base64Audio = reader.result.split(',')[1];
+        
+  //       console.log("🎤 Sending voice message...");
+        
+  //       // Stage 2: Processing
+  //       updateVoiceProcessing("processing", "Processing your question...");
+        
+  //       // Send to backend
+  //       const response = await sendVoiceMessage(
+  //         sessionId,
+  //         base64Audio,
+  //         language,
+  //         voiceGender,
+  //         user
+  //       );
+
+  //       console.log("✅ Voice response received");
+
+  //       // Stage 3: Generating response
+  //       updateVoiceProcessing("generating", "Generating response...");
+
+  //       // Add user message (transcribed text)
+  //       const userMessage = {
+  //         role: "user",
+  //         content: response.data.userText,
+  //         timestamp: new Date(),
+  //         isVoice: true
+  //       };
+  //       setMessages((prev) => [...prev, userMessage]);
+
+  //       // Add bot response
+  //       const botMessage = {
+  //         role: "assistant",
+  //         content: response.data.responseText,
+  //         timestamp: new Date(),
+  //         isVoice: true
+  //       };
+  //       setMessages((prev) => [...prev, botMessage]);
+
+  //       // Stage 4: Playing audio
+  //       updateVoiceProcessing("playing", "Playing response...");
+
+  //       // Play audio response
+  //       if (response.data.responseAudio) {
+  //         await playAudioResponse(response.data.responseAudio);
+  //       }
+        
+  //       // Clear processing indicator after audio plays
+  //       clearVoiceProcessing();
+  //     };
+  //   } catch (error) {
+  //     console.error("Failed to send voice message:", error);
+  //     setInitError("Failed to process voice message. Please try again.");
+  //     clearVoiceProcessing();
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+
   const sendVoiceMessageToBackend = async (audioBlob) => {
-    if (!sessionId) {
-      setInitError("Session not initialized");
-      return;
-    }
+  if (!sessionId) {
+    // ✅ CHANGE THIS: Show alert for voice mode too
+    showReportAlert();
+    return;
+  }
 
-    setLoading(true);
-    setInitError(null);
+  setLoading(true);
+  setInitError(null);
 
-    try {
-      // Stage 1: Converting audio
-      updateVoiceProcessing("converting", "Converting your voice to text...");
+  try {
+    // Stage 1: Converting audio
+    updateVoiceProcessing("converting", "Converting your voice to text...");
+    
+    const reader = new FileReader();
+    reader.readAsDataURL(audioBlob);
+    
+    reader.onloadend = async () => {
+      const base64Audio = reader.result.split(',')[1];
       
-      const reader = new FileReader();
-      reader.readAsDataURL(audioBlob);
+      console.log("🎤 Sending voice message...");
       
-      reader.onloadend = async () => {
-        const base64Audio = reader.result.split(',')[1];
-        
-        console.log("🎤 Sending voice message...");
-        
-        // Stage 2: Processing
-        updateVoiceProcessing("processing", "Processing your question...");
-        
-        // Send to backend
-        const response = await sendVoiceMessage(
-          sessionId,
-          base64Audio,
-          language,
-          voiceGender,
-          user
-        );
+      // Stage 2: Processing
+      updateVoiceProcessing("processing", "Processing your question...");
+      
+      // Send to backend
+      const response = await sendVoiceMessage(
+        sessionId,
+        base64Audio,
+        language,
+        voiceGender,
+        user
+      );
 
-        console.log("✅ Voice response received");
+      console.log("✅ Voice response received");
 
-        // Stage 3: Generating response
-        updateVoiceProcessing("generating", "Generating response...");
+      // Stage 3: Generating response
+      updateVoiceProcessing("generating", "Generating response...");
 
-        // Add user message (transcribed text)
-        const userMessage = {
-          role: "user",
-          content: response.data.userText,
-          timestamp: new Date(),
-          isVoice: true
-        };
-        setMessages((prev) => [...prev, userMessage]);
-
-        // Add bot response
-        const botMessage = {
-          role: "assistant",
-          content: response.data.responseText,
-          timestamp: new Date(),
-          isVoice: true
-        };
-        setMessages((prev) => [...prev, botMessage]);
-
-        // Stage 4: Playing audio
-        updateVoiceProcessing("playing", "Playing response...");
-
-        // Play audio response
-        if (response.data.responseAudio) {
-          await playAudioResponse(response.data.responseAudio);
-        }
-        
-        // Clear processing indicator after audio plays
-        clearVoiceProcessing();
+      // Add user message (transcribed text)
+      const userMessage = {
+        role: "user",
+        content: response.data.userText,
+        timestamp: new Date(),
+        isVoice: true
       };
-    } catch (error) {
-      console.error("Failed to send voice message:", error);
-      setInitError("Failed to process voice message. Please try again.");
-      clearVoiceProcessing();
-    } finally {
-      setLoading(false);
-    }
-  };
+      setMessages((prev) => [...prev, userMessage]);
 
+      // Add bot response
+      const botMessage = {
+        role: "assistant",
+        content: response.data.responseText,
+        timestamp: new Date(),
+        isVoice: true
+      };
+      setMessages((prev) => [...prev, botMessage]);
+
+      // Stage 4: Playing audio
+      updateVoiceProcessing("playing", "Playing response...");
+
+      // Play audio response
+      if (response.data.responseAudio) {
+        await playAudioResponse(response.data.responseAudio);
+      }
+      
+      // Clear processing indicator after audio plays
+      clearVoiceProcessing();
+    };
+  } catch (error) {
+    alert( "⚠️ Unable to open chatbot right now.\n\n" +
+    "Please try again from 'My Reports' section.."
+    );
+    console.error("Failed to send voice message:", error);
+    
+    // ✅ ADD THIS: Check if session is invalid
+    if (error.message.includes("Session not found") || error.message.includes("404")) {
+      showReportAlert();
+      onClose();
+    } else {
+      // setInitError("Failed to process voice message. Please try again.");
+      alert( "⚠️ Unable to open chatbot right now.\n\n" +
+    "Please try again from 'My Reports' section.."
+    );
+    }
+    
+    clearVoiceProcessing();
+  } finally {
+    setLoading(false);
+  }
+};
   const playAudioResponse = (base64Audio) => {
     return new Promise((resolve, reject) => {
       try {
