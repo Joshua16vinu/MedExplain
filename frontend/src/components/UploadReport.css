@@ -1,216 +1,295 @@
-.upload-view {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 2rem;
-      margin-left:250px;
-    }
+/* ==================== UPLOAD CONTAINER ==================== */
+.upload-container {
+  max-width: 600px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
 
-    .upload-card {
-      background: var(--glass-bg);
-      backdrop-filter: blur(20px);
-      border: 1px solid var(--glass-border);
-      padding: 3rem;
-      border-radius: 20px;
-      box-shadow: var(--shadow-lg);
-      max-width: 520px;
-      width: 100%;
-      animation: fadeInUp 0.5s ease;
-    }
+/* ==================== MEDICAL INFO CARD ==================== */
+.medical-info-card {
+  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+  border-left: 4px solid var(--accent-blue);
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  display: flex;
+  gap: 1rem;
+  box-shadow: var(--shadow-sm);
+}
 
-    @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
+.info-icon {
+  font-size: 2rem;
+  flex-shrink: 0;
+}
 
-    .upload-card h2 {
-      font-size: 1.75rem;
-      font-weight: 700;
-      margin-bottom: 0.5rem;
-      background: linear-gradient(135deg, #0ea5e9, #3b82f6);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
+.info-content h4 {
+  color: var(--primary-dark);
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+}
 
-    .subtitle {
-      color: var(--text-secondary);
-      margin-bottom: 2rem;
-      font-size: 0.95rem;
-    }
+.info-content ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
 
-    /* File Upload Styling */
-    .file-upload-wrapper {
-      margin-bottom: 1.5rem;
-    }
+.info-content li {
+  padding: 0.3rem 0;
+  padding-left: 1.5rem;
+  position: relative;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+}
 
-    .file-input-hidden {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      opacity: 0;
-      overflow: hidden;
-    }
+.info-content li::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: var(--secondary-medical);
+  font-weight: bold;
+}
 
-    .file-input-label {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.75rem;
-      padding: 1.5rem;
-      border: 2px dashed var(--border-color);
-      border-radius: 12px;
-      background: linear-gradient(145deg, #ffffff, #f8fafc);
-      cursor: pointer;
-      transition: all 0.3s ease;
-      position: relative;
-      overflow: hidden;
-    }
+/* ==================== UPLOAD CARD ==================== */
+.upload-card {
+  background: var(--white);
+  border-radius: var(--border-radius);
+  padding: 2rem;
+  box-shadow: var(--shadow-md);
+  transition: var(--transition);
+}
 
-    .file-input-label::before {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 0;
-      height: 0;
-      border-radius: 50%;
-      background: rgba(14, 165, 233, 0.1);
-      transform: translate(-50%, -50%);
-      transition: width 0.6s, height 0.6s;
-    }
+.upload-card:hover {
+  box-shadow: var(--shadow-lg);
+}
 
-    .file-input-label:hover::before {
-      width: 300px;
-      height: 300px;
-    }
+.upload-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
 
-    .file-input-label:hover {
-      border-color: var(--accent-blue);
-      transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(14, 165, 233, 0.15);
-    }
+.upload-icon {
+  font-size: 3rem;
+  margin-bottom: 0.5rem;
+}
 
-    .file-selected-indicator {
-      margin-top: 0.75rem;
-      padding: 0.625rem 1rem;
-      background: #ecfdf5;
-      border: 1px solid #a7f3d0;
-      border-radius: 8px;
-      color: #059669;
-      font-weight: 600;
-      text-align: center;
-      animation: successPop 0.5s ease;
-    }
+.upload-header h2 {
+  color: var(--primary-medical);
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
 
-    @keyframes successPop {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.05); }
-    }
+.subtitle {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
 
-    /* Select Inputs */
-    .report-type-selector {
-      margin-bottom: 1.5rem;
-    }
+/* ==================== ERROR MESSAGE ==================== */
+.error-message {
+  background: #fee;
+  color: var(--accent-red);
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  border: 1px solid var(--accent-red);
+}
 
-    .report-type-selector label {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-      font-weight: 500;
-      font-size: 0.95rem;
-    }
+/* ==================== FILE UPLOAD ==================== */
+.file-upload-wrapper {
+  margin-bottom: 1.5rem;
+}
 
-    .type-select {
-      padding: 0.875rem 1rem;
-      border: 2px solid var(--border-color);
-      border-radius: 10px;
-      font-size: 1rem;
-      background: white;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
+.file-input-hidden {
+  display: none;
+}
 
-    .type-select:focus {
-      outline: none;
-      border-color: var(--accent-blue);
-      box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
-    }
+.file-input-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 1.5rem;
+  border: 2px dashed var(--primary-medical);
+  border-radius: var(--border-radius);
+  background: var(--light-gray);
+  cursor: pointer;
+  transition: var(--transition);
+}
 
-    /* Upload Button */
-    .upload-btn {
-      width: 100%;
-      padding: 1rem 1.5rem;
-      font-size: 1rem;
-      font-weight: 600;
-      background: var(--primary-gradient);
-      color: white;
-      border: none;
-      border-radius: 12px;
-      cursor: pointer;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
-      position: relative;
-      overflow: hidden;
-    }
+.file-input-label:hover {
+  background: var(--primary-medical);
+  color: white;
+  border-color: var(--primary-dark);
+}
 
-    .upload-btn::after {
-      content: '';
-      position: absolute;
-      top: -50%;
-      right: -50%;
-      bottom: -50%;
-      left: -50%;
-      background: linear-gradient(to bottom, rgba(229, 255, 255, 0.3), transparent 50%);
-      transform: rotateZ(60deg) translate(-5em, 7.5em);
-    }
+.file-input-label:hover .file-icon {
+  stroke: white;
+}
 
-    .upload-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(14, 165, 233, 0.4);
-    }
+.file-icon {
+  stroke: var(--primary-medical);
+  transition: var(--transition);
+}
 
-    .upload-btn:hover::after {
-      animation: sheen 1s forwards;
-    }
+.file-input-text {
+  font-size: 1rem;
+  font-weight: 500;
+}
 
-    @keyframes sheen {
-      100% {
-        transform: rotateZ(60deg) translate(1em, -9em);
-      }
-    }
+.file-selected-indicator {
+  margin-top: 0.5rem;
+  color: var(--secondary-medical);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+}
 
-    .upload-btn:active {
-      transform: scale(0.98);
-    }
+/* ==================== FORM GROUP ==================== */
+.form-group {
+  margin-bottom: 1.5rem;
+}
 
-    .upload-btn:disabled {
-      background: linear-gradient(135deg, #94a3b8, #64748b);
-      cursor: not-allowed;
-      box-shadow: none;
-      transform: none;
-    }
+.form-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-primary);
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+}
 
-    /* Loading Spinner */
-    .loading-spinner {
-      width: 18px;
-      height: 18px;
-      border: 3px solid rgba(255, 255, 255, 0.3);
-      border-top-color: white;
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-    }
+.type-select {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 2px solid var(--medium-gray);
+  border-radius: 8px;
+  font-size: 1rem;
+  background: var(--white);
+  cursor: pointer;
+  transition: var(--transition);
+}
 
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
+.type-select:focus {
+  outline: none;
+  border-color: var(--primary-medical);
+  box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+}
+
+.type-select:hover {
+  border-color: var(--primary-light);
+}
+
+/* ==================== UPLOAD BUTTON ==================== */
+.upload-btn {
+  width: 100%;
+  padding: 1rem;
+  background: linear-gradient(135deg, var(--primary-medical) 0%, var(--primary-dark) 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: var(--transition);
+  box-shadow: var(--shadow-sm);
+}
+
+.upload-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.upload-btn:disabled {
+  background: var(--medium-gray);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.loading-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid white;
+  border-top: 2px solid transparent;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ==================== FEATURES CARD ==================== */
+.features-card {
+  background: linear-gradient(135deg, #fff9e6 0%, #ffe8a1 100%);
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.features-card h4 {
+  color: var(--primary-dark);
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+  text-align: center;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.feature-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.feature-icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.feature-text {
+  flex: 1;
+}
+
+.feature-text strong {
+  display: block;
+  color: var(--primary-dark);
+  font-size: 0.9rem;
+  margin-bottom: 0.2rem;
+}
+
+.feature-text p {
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  margin: 0;
+}
+
+/* ==================== RESPONSIVE ==================== */
+@media (max-width: 768px) {
+  .upload-container {
+    max-width: 100%;
+  }
+
+  .features-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .medical-info-card {
+    flex-direction: column;
+  }
+}

@@ -1,6 +1,6 @@
 # We extract text first, never send raw PDF to AI.
 
-import fitz  # pymupdf
+import fitz  
 
 def extract_text_from_pdf(file_path: str) -> str:
     doc = fitz.open(file_path)

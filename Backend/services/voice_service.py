@@ -139,7 +139,9 @@
 #         "mr": "Marathi (मराठी)"
 #     }
 
-from google.cloud import speech_v1p1beta1 as speech
+# from google.cloud import speech_v1p1beta1 as speech
+from google.cloud import speech
+
 from gtts import gTTS
 from services.gemini_service import client
 from utils.language import get_language_instruction
