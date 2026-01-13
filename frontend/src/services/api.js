@@ -268,3 +268,49 @@ export const sendVoiceMessage = async (sessionId, audioBase64, language, gender,
   if (!response.ok) throw new Error("Voice message failed");
   return await response.json();
 };
+
+
+
+export async function explainMedicalTerm(term, language = "en", user) {
+  const response = await authenticatedFetch(
+    "/medical-term/explain",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        term,
+        language
+      }),
+    },
+    user
+  );
+  
+  return response.data;
+}
+
+/**
+ * Check symptoms and get possible conditions
+ * @param {string} symptoms - Description of symptoms
+ * @param {string} language - Language code (default: "en")
+ * @param {Object} user - Firebase user object
+ */
+export async function checkSymptoms(symptoms, language = "en", user) {
+  const response = await authenticatedFetch(
+    "/symptom-checker/analyze",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        symptoms,
+        language
+      }),
+    },
+    user
+  );
+  
+  return response.data;
+}

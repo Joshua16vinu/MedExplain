@@ -225,3 +225,84 @@ RESPONSE FORMAT (MANDATORY — ONLY IF MEDICAL REPORT):
 
     return response.text
 
+
+def explain_medical_term(term: str, language: str = "en") -> str:
+    """
+    Explain a medical term in simple, patient-friendly language
+    """
+    prompt = f"""
+You are a medical terminology explainer for patients.
+
+RULES:
+- Explain in VERY simple, everyday language
+- Avoid using complex medical jargon
+- Use analogies or comparisons when helpful
+- Keep the explanation concise (2-4 sentences)
+- If it's a test/measurement, mention what it measures
+- Do NOT provide medical advice or diagnosis
+
+Language: {language}
+
+Medical Term: {term}
+
+Provide a simple explanation that a patient without medical knowledge can understand.
+"""
+
+    response = client.models.generate_content(
+        model="gemini-2.5-flash",
+        contents=prompt
+    )
+
+    return response.text
+
+
+def analyze_symptoms(symptoms: str, language: str = "en") -> str:
+    """
+    Analyze symptoms and provide possible conditions (educational only)
+    """
+    prompt = f"""
+You are a symptom analysis assistant for educational purposes.
+
+CRITICAL SAFETY RULES (MUST FOLLOW):
+- This is for INFORMATION ONLY, NOT medical diagnosis
+- Do NOT diagnose specific diseases
+- Use phrases like "may indicate", "could be related to", "commonly associated with"
+- ALWAYS include urgent care warnings for serious symptoms
+- ALWAYS end with strong advice to consult a healthcare professional
+- If symptoms seem serious (chest pain, difficulty breathing, severe bleeding, etc.),
+  IMMEDIATELY advise seeking emergency medical care
+
+Language: {language}
+
+Symptoms Described: {symptoms}
+
+RESPONSE FORMAT:
+
+1. **Understanding Your Symptoms**
+   - Acknowledge what they're experiencing
+
+2. **Common Conditions These May Relate To**
+   - List 2-3 common conditions these symptoms are often associated with
+   - Use soft language like "commonly associated with", "may indicate"
+
+3. **What Typically Causes This**
+   - Brief explanation of common causes
+
+4. **When to Seek Medical Care**
+   - Red flags requiring immediate attention
+   - When to schedule a doctor visit
+
+5. **Important Reminder**
+   - This is educational information only
+   - A healthcare professional must evaluate symptoms properly
+   - Do not delay seeking care if symptoms are concerning
+
+Remember: Be helpful but cautious. Patient safety is paramount.
+"""
+
+    response = client.models.generate_content(
+        model="gemini-2.5-flash",
+        contents=prompt
+    )
+
+    return response.text

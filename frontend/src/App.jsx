@@ -311,7 +311,7 @@ function App() {
     if (!summary) {
       return (
         <div className="centered-view">
-          <UploadReport user={user} onResult={handleUploadResult} />
+          <UploadReport user={user} onResult={handleUploadResult} summary={summary}  />
         </div>
       );
     }
@@ -319,7 +319,7 @@ function App() {
     return (
       <div className="split-view">
         <div className="split-left">
-          <UploadReport user={user} onResult={handleUploadResult} />
+          <UploadReport user={user} onResult={handleUploadResult} summary={summary} />
         </div>
         <div className="split-right">
           <SummaryView

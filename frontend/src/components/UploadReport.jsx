@@ -220,8 +220,10 @@
 import { useState } from "react";
 import { uploadReport } from "../services/api";
 import "./UploadReport.css";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
-export default function UploadReport({ user, onResult, onUploadSuccess }) {
+export default function UploadReport({ user, onResult, onUploadSuccess,summary }) {
   // Upload Section State
   const [file, setFile] = useState(null);
   const [reportType, setReportType] = useState("");
@@ -238,6 +240,7 @@ export default function UploadReport({ user, onResult, onUploadSuccess }) {
   const [symptoms, setSymptoms] = useState("");
   const [diagnosis, setDiagnosis] = useState("");
   const [symptomLoading, setSymptomLoading] = useState(false);
+  const isSummaryActive = Boolean(summary);
 
   async function handleUpload() {
     if (!file || !user) {
@@ -456,7 +459,12 @@ export default function UploadReport({ user, onResult, onUploadSuccess }) {
                 </svg>
                 <strong>{medicalTerm}</strong>
               </div>
-              <p>{termDefinition}</p>
+              
+  <ReactMarkdown remarkPlugins={[remarkGfm]}>
+      {diagnosis}
+    </ReactMarkdown>
+
+
             </div>
           )}
 
@@ -523,7 +531,13 @@ export default function UploadReport({ user, onResult, onUploadSuccess }) {
                 </svg>
                 <strong>Analysis</strong>
               </div>
-              <p>{diagnosis}</p>
+              
+<ReactMarkdown remarkPlugins={[remarkGfm]}>
+      {diagnosis}
+    </ReactMarkdown>
+
+
+              
               <div className="consult-reminder">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
@@ -535,7 +549,10 @@ export default function UploadReport({ user, onResult, onUploadSuccess }) {
         </div>
       </div>
 
+
       {/* RIGHT COLUMN - TESTIMONIALS */}
+      
+{!isSummaryActive && (
       <div className="right-column">
         <div className="testimonials-section">
           <div className="testimonials-header">
@@ -607,6 +624,7 @@ export default function UploadReport({ user, onResult, onUploadSuccess }) {
           </div>
         </div>
       </div>
+)}
     </div>
   );
 }

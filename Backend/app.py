@@ -14,6 +14,8 @@ from utils.exception import AppException
 from routes.comparison_routes import comparison_bp
 from routes.chatbot_routes import chatbot_bp
 from routes.voice_chatbot_routes import voice_chatbot_bp
+from routes.medical_term_routes import medical_term_bp
+from routes.symptom_checker_routes import symptom_checker_bp
 app = Flask(__name__)
 CORS(app)
 app.register_blueprint(voice_chatbot_bp)
@@ -22,6 +24,8 @@ app.register_blueprint(health_bp)
 app.register_blueprint(report_bp)
 app.register_blueprint(comparison_bp)
 app.register_blueprint(chatbot_bp)
+app.register_blueprint(medical_term_bp)
+app.register_blueprint(symptom_checker_bp)
 
 @app.errorhandler(AppException)
 def handle_app_exception(e):
