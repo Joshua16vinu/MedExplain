@@ -1,236 +1,6 @@
-// import { useState } from "react";
-// import "./App.css";
-
-// import Login from "./components/Login";
-// import UploadReport from "./components/UploadReport";
-// import SummaryView from "./components/SummaryView";
-// import ReportList from "./components/ReportList";
-// import CompareReports from "./components/CompareReports";
-// import UserProfile from "./components/UserProfile";
-// import Chatbot from "./components/Chatbot";
-
-// function App() {
-//   const [user, setUser] = useState(null);
-//   const [summary, setSummary] = useState("");
-//   const [selectedReport, setSelectedReport] = useState(null);
-//   const [activeView, setActiveView] = useState("upload");
-//   const [showChatbot, setShowChatbot] = useState(false);
-//   const [chatbotReport, setChatbotReport] = useState(null);
-//   const [compareResult, setCompareResult] = useState(null);
-
-
-//   const handleLogout = () => {
-//     setUser(null);
-//     setSummary("");
-//     setSelectedReport(null);
-//     setActiveView("upload");
-//     setShowChatbot(false);
-//     setChatbotReport(null);
-//   };
-
-//   // const handleOpenChatbot = (report) => {
-//   //   setChatbotReport(report);
-//   //   setShowChatbot(true);
-//   // };
-// // In App.jsx
-// const handleOpenChatbot = async (report) => {
-//   // If report was just uploaded, add a small delay
-//   if (!report.id || report.id === 'temp') {
-//     await new Promise(resolve => setTimeout(resolve, 1000));
-//   }
-  
-//   setChatbotReport(report);
-//   setShowChatbot(true);
-// };
-//   const handleReportSelect = async (report) => {
-//     setSelectedReport(report);
-//     try {
-//       const { getReportSummary } = await import("./services/api");
-//       const result = await getReportSummary(
-//         report.reportName,
-//         report.reportType,
-//         user
-//       );
-//       setSummary(result.summary);
-//     } catch (err) {
-//       console.error(err);
-//       alert("Failed to load report summary");
-//     }
-//   };
-
-//   return (
-//     <div className="app-container">
-
-//       {/* ================= HEADER ================= */}
-//       <header className="app-header">
-//         <div className="header-left">
-//           <h1>MEDEXPLAIN</h1>
-//           <p className="tagline">Medical Report Summarizer for Rural Clinics</p>
-//         </div>
-
-//         {user && (
-//           <div className="header-right">
-//             <UserProfile user={user} onLogout={handleLogout} />
-//           </div>
-//         )}
-//       </header>
-
-//       {/* ================= LOGIN ================= */}
-//       {!user && (
-//         <div className="login-center-wrapper">
-//   <Login onLogin={setUser} />
-// </div>
-
-//       )}
-
-//       {/* ================= MAIN APP ================= */}
-//       {user && (
-//         <>
-//           {/* -------- NAV TABS -------- */}
-//           <div className="nav-tabs">
-//             <button
-//               className={`nav-tab ${activeView === "upload" ? "active" : ""}`}
-//               onClick={() => {
-//                 setActiveView("upload");
-//                 setSummary("");
-//                 setSelectedReport(null);
-//               }}
-//             >
-//               Upload
-//             </button>
-
-//             <button
-//               className={`nav-tab ${activeView === "list" ? "active" : ""}`}
-//               onClick={() => {
-//                 setActiveView("list");
-//                 setSummary("");
-//                 setSelectedReport(null);
-//               }}
-//             >
-//               My Reports
-//             </button>
-
-//             <button
-//               className={`nav-tab ${activeView === "compare" ? "active" : ""}`}
-//               onClick={() => {
-//                 setActiveView("compare");
-//                 setSummary("");
-//                 setSelectedReport(null);
-//               }}
-//             >
-//               Compare
-//             </button>
-//           </div>
-
-//           {/* -------- CONTENT -------- */}
-//           <div className="main-content-wrapper">
-
-//             {/* ========== UPLOAD VIEW ========== */}
-//             {activeView === "upload" && !summary && (
-//               <div className="centered-view">
-//                 <UploadReport
-//                   user={user}
-//                   onResult={(res) => {
-//                     setSummary(res.summary);
-//                     // setSelectedReport({
-//                     //   reportName: res.reportName,
-//                     //   reportType: res.reportType
-//                     // });
-//                     setSelectedReport(res);
-//                   }}
-//                 />
-//               </div>
-//             )}
-// {activeView === "upload" && summary && selectedReport && (
-//   <div className="split-view">
-
-//     {/* LEFT: Upload Form */}
-//     <div className="split-left">
-//       <UploadReport
-//         user={user}
-//         onResult={(res) => {
-//           setSummary(res.summary);
-//           // setSelectedReport({
-//           //   reportName: res.reportName,
-//           //   reportType: res.reportType
-//           // });
-//           setSelectedReport(res);
-//         }}
-//       />
-//     </div>
-
-//     {/* RIGHT: Summary */}
-//     <div className="split-right">
-//       <SummaryView
-//         summary={summary}
-//         report={selectedReport}
-//         onOpenChatbot={handleOpenChatbot}
-//       />
-//     </div>
-
-//   </div>
-// )}
-
-
-//             {/* ========== REPORTS VIEW ========== */}
-//             {activeView === "list" && (
-//               <div className="split-view">
-//                 <div className="split-left">
-//                   <ReportList
-//                     user={user}
-//                     onReportSelect={handleReportSelect}
-//                     selectedReport={selectedReport}
-//                   />
-//                 </div>
-
-//                 <div className="split-right">
-//                   {summary && selectedReport ? (
-//                     <SummaryView
-//                       summary={summary}
-//                       report={selectedReport}
-//                       onOpenChatbot={handleOpenChatbot}
-//                     />
-//                   ) : (
-//                     <div className="empty-selection-state">
-//                       <p>Select a report to view its summary</p>
-//                     </div>
-//                   )}
-//                 </div>
-//               </div>
-//             )}
-
-//             {/* ========== COMPARE VIEW ========== */}
-//   {activeView === "compare" && (
-//               <CompareReports user={user} />
-//             )}
-
-
-
-
-//           </div>
-//         </>
-//       )}
-
-//       {/* ================= CHATBOT ================= */}
-//       {showChatbot && chatbotReport && user && (
-//         <Chatbot
-//           user={user}
-//           reportName={chatbotReport.reportName}
-//           reportType={chatbotReport.reportType}
-//           onClose={() => {
-//             setShowChatbot(false);
-//             setChatbotReport(null);
-//           }}
-//         />
-//       )}
-//     </div>
-//   );
-// }
-
-// export default App;
 
 import { useState } from "react";
-import "./App.css";
+// import "./App.css"; // Removed custom CSS
 import Login from "./components/Login";
 import UploadReport from "./components/UploadReport";
 import SummaryView from "./components/SummaryView";
@@ -244,11 +14,11 @@ import NavigationTabs from "./components/NavigationTabs";
 function App() {
   // User state
   const [user, setUser] = useState(null);
-  
+
   // Report state
   const [summary, setSummary] = useState("");
   const [selectedReport, setSelectedReport] = useState(null);
-  
+
   // UI state
   const [activeView, setActiveView] = useState("upload");
   const [showChatbot, setShowChatbot] = useState(false);
@@ -310,18 +80,21 @@ function App() {
   const renderUploadView = () => {
     if (!summary) {
       return (
-        <div className="centered-view">
-          <UploadReport user={user} onResult={handleUploadResult} summary={summary}  />
+        <div className="flex justify-center w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <UploadReport user={user} onResult={handleUploadResult} summary={summary} />
         </div>
       );
     }
 
     return (
-      <div className="split-view">
-        <div className="split-left">
+      <div className="flex flex-col lg:grid lg:grid-cols-2 gap-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 min-h-[600px] items-start">
+        {/* Upload/List Section */}
+        <div className="w-full order-1">
           <UploadReport user={user} onResult={handleUploadResult} summary={summary} />
         </div>
-        <div className="split-right">
+
+        {/* Summary Section */}
+        <div className="w-full order-2">
           <SummaryView
             summary={summary}
             report={selectedReport}
@@ -333,15 +106,15 @@ function App() {
   };
 
   const renderListView = () => (
-    <div className="split-view">
-      <div className="split-left">
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 h-[calc(100vh-140px)] min-h-[600px]">
+      <div className="lg:col-span-4 overflow-y-auto pr-2 custom-scrollbar">
         <ReportList
           user={user}
           onReportSelect={handleReportSelect}
           selectedReport={selectedReport}
         />
       </div>
-      <div className="split-right">
+      <div className="lg:col-span-8 overflow-y-auto pl-2 custom-scrollbar">
         {summary && selectedReport ? (
           <SummaryView
             summary={summary}
@@ -349,8 +122,12 @@ function App() {
             onOpenChatbot={handleOpenChatbot}
           />
         ) : (
-          <div className="empty-selection-state">
-            <p>Select a report to view its summary</p>
+          <div className="flex flex-col items-center justify-center h-full p-12 text-center border-2 border-dashed border-slate-200 rounded-2xl bg-slate-50">
+            <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mb-4">
+              <span className="text-3xl">📋</span>
+            </div>
+            <h3 className="text-lg font-semibold text-slate-800">No Report Selected</h3>
+            <p className="text-slate-500 mt-1 max-w-sm">Select a report from the list on the left to view its detailed AI summary and analysis.</p>
           </div>
         )}
       </div>
@@ -364,7 +141,11 @@ function App() {
       case "list":
         return renderListView();
       case "compare":
-        return <CompareReports user={user} />;
+        return (
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <CompareReports user={user} />
+          </div>
+        );
       default:
         return null;
     }
@@ -372,9 +153,9 @@ function App() {
 
   if (!user) {
     return (
-      <div className="app-container">
+      <div className="min-h-screen bg-slate-50 flex flex-col">
         <Header />
-        <div className="login-center-wrapper">
+        <div className="flex-1 flex flex-col justify-center items-center p-4">
           <Login onLogin={setUser} />
         </div>
       </div>
@@ -382,12 +163,12 @@ function App() {
   }
 
   return (
-    <div className="app-container">
+    <div className="min-h-screen bg-slate-50 flex flex-col font-sans">
       <Header user={user} onLogout={handleLogout} />
-      
+
       <NavigationTabs activeView={activeView} onTabChange={handleTabChange} />
-      
-      <div className="main-content-wrapper">
+
+      <div className="flex-1 w-full bg-slate-50">
         {renderActiveView()}
       </div>
 

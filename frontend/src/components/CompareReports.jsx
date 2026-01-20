@@ -1,255 +1,17 @@
-// import { useState } from "react";
-// import { compareReports } from "../services/api";
-// import ReportList from "./ReportList";
-// import ComparisonView from "./ComparisonView";
-// import "./CompareReports.css";
-
-// export default function CompareReports({ user }) {
-//   const [oldReport, setOldReport] = useState(null);
-//   const [newReport, setNewReport] = useState(null);
-//   const [comparisonFile, setComparisonFile] = useState(null);
-//   const [comparisonMethod, setComparisonMethod] = useState("existing"); // "existing" or "upload"
-//   const [newReportType, setNewReportType] = useState(""); // Report type for new upload
-//   const [loading, setLoading] = useState(false);
-//   const [comparison, setComparison] = useState(null);
-//   const [error, setError] = useState(null);
-
-//   const handleCompare = async () => {
-//     if (!oldReport) {
-//       setError("Please select an old report");
-//       return;
-//     }
-
-//     if (comparisonMethod === "upload") {
-//       if (!comparisonFile || !newReportType) {
-//         setError("Please upload a new report file and select its type");
-//         return;
-//       }
-//     } else {
-//       if (!newReport) {
-//         setError("Please select a new report");
-//         return;
-//       }
-//     }
-
-//     try {
-//       setLoading(true);
-//       setError(null);
-//       setComparison(null);
-
-//       const params = {
-//         oldReportName: oldReport.reportName,
-//         oldReportType: oldReport.reportType,
-//         language: "en",
-//       };
-
-//       if (comparisonMethod === "upload") {
-//         params.file = comparisonFile;
-//         params.newReportType = newReportType;
-//       } else {
-//         params.newReportName = newReport.reportName;
-//         params.newReportType = newReport.reportType;
-//       }
-
-//       const result = await compareReports(params, user);
-//       setComparison(result.comparison);
-      
-//       // Update newReport if file was uploaded
-//       if (comparisonMethod === "upload" && result.reportId) {
-//         setNewReport({
-//           reportName: comparisonFile.name.replace(/\.[^/.]+$/, ""),
-//           reportType: newReportType,
-//         });
-//       }
-//     } catch (err) {
-//       setError(err.message);
-//       console.error("Comparison failed:", err);
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   const resetComparison = () => {
-//     setOldReport(null);
-//     setNewReport(null);
-//     setComparisonFile(null);
-//     setComparison(null);
-//     setError(null);
-//   };
-
-//   return (
-//     <div className="compare-reports-container">
-//       <div className="compare-reports-header">
-//         <h2>Compare Reports</h2>
-//         <p className="subtitle">
-//           Select two reports to see how your health metrics have changed over time
-//         </p>
-//       </div>
-
-//       <div className="compare-reports-content">
-//         {/* Old Report Selection */}
-//         <div className="compare-section">
-//           <h3>1. Select Old Report</h3>
-//           <ReportList
-//             user={user}
-//             onReportSelect={setOldReport}
-//             selectedReport={oldReport}
-//           />
-//         </div>
-
-//         {/* Comparison Type Selection */}
-//         {oldReport && (
-//           <div className="compare-section">
-//             <h3>2. Choose Comparison Method</h3>
-//             <div className="comparison-type-selector">
-//               <label className="type-option">
-//                 <input
-//                   type="radio"
-//                   name="comparisonMethod"
-//                   value="existing"
-//                   checked={comparisonMethod === "existing"}
-//                   onChange={(e) => {
-//                     setComparisonMethod(e.target.value);
-//                     setNewReport(null);
-//                     setComparisonFile(null);
-//                     setNewReportType("");
-//                   }}
-//                 />
-//                 <span>Compare with existing report</span>
-//               </label>
-//               <label className="type-option">
-//                 <input
-//                   type="radio"
-//                   name="comparisonMethod"
-//                   value="upload"
-//                   checked={comparisonMethod === "upload"}
-//                   onChange={(e) => {
-//                     setComparisonMethod(e.target.value);
-//                     setNewReport(null);
-//                   }}
-//                 />
-//                 <span>Upload new report to compare</span>
-//               </label>
-//             </div>
-//           </div>
-//         )}
-
-//         {/* New Report Selection or Upload */}
-//         {oldReport && comparisonMethod === "existing" && (
-//           <div className="compare-section">
-//             <h3>3. Select New Report</h3>
-//             <ReportList
-//               user={user}
-//               onReportSelect={setNewReport}
-//               selectedReport={newReport}
-//             />
-//           </div>
-//         )}
-
-//         {oldReport && comparisonMethod === "upload" && (
-//           <div className="compare-section">
-//             <h3>3. Upload New Report</h3>
-//             <div className="file-upload-wrapper">
-//               <input
-//                 id="comparison-file-input"
-//                 type="file"
-//                 accept=".pdf"
-//                 onChange={(e) => setComparisonFile(e.target.files[0])}
-//                 className="file-input-hidden"
-//               />
-//               <label htmlFor="comparison-file-input" className="file-input-label">
-//                 <svg className="file-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-//                   <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-//                   <polyline points="17 8 12 3 7 8"></polyline>
-//                   <line x1="12" y1="3" x2="12" y2="15"></line>
-//                 </svg>
-//                 <span className="file-input-text">
-//                   {comparisonFile ? comparisonFile.name : "Choose PDF File"}
-//                 </span>
-//               </label>
-//               {comparisonFile && (
-//                 <div className="file-selected-indicator">
-//                   ✓ File selected
-//                 </div>
-//               )}
-//             </div>
-
-//             <div className="report-type-selector">
-//               <label>
-//                 Report Type:
-//                 <select
-//                   value={newReportType}
-//                   onChange={(e) => setNewReportType(e.target.value)}
-//                   className="type-select"
-//                 >
-//                   <option value="">Select type...</option>
-//                   <option value="CBC">CBC (Complete Blood Count)</option>
-//                   <option value="LIPID">Lipid Profile</option>
-//                   <option value="LFT">LFT (Liver Function Test)</option>
-//                   <option value="KFT">KFT (Kidney Function Test)</option>
-//                   <option value="THYROID">Thyroid Function Test</option>
-//                   <option value="OTHER">Other</option>
-//                 </select>
-//               </label>
-//             </div>
-//           </div>
-//         )}
-
-//         {/* Compare Button */}
-//         {oldReport && ((comparisonMethod === "existing" && newReport) || (comparisonMethod === "upload" && comparisonFile && newReportType)) && (
-//           <div className="compare-actions">
-//             {error && (
-//               <div className="error-message">
-//                 {error}
-//               </div>
-//             )}
-//             <button
-//               className="compare-btn"
-//               onClick={handleCompare}
-//               disabled={loading}
-//             >
-//               {loading ? (
-//                 <>
-//                   <span className="loading-spinner"></span>
-//                   Comparing...
-//                 </>
-//               ) : (
-//                 <>
-//                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-//                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-//                     <polyline points="17 8 12 3 7 8"></polyline>
-//                     <line x1="12" y1="3" x2="12" y2="15"></line>
-//                   </svg>
-//                   Compare Reports
-//                 </>
-//               )}
-//             </button>
-//             {comparison && (
-//               <button className="reset-btn" onClick={resetComparison}>
-//                 Compare Another
-//               </button>
-//             )}
-//           </div>
-//         )}
-//       </div>
-
-//       {/* Comparison Result */}
-//       {comparison && (
-//         <ComparisonView
-//           comparison={comparison}
-//           oldReport={oldReport}
-//           newReport={newReport}
-//         />
-//       )}
-//     </div>
-//   );
-// }
-
-
 import { useState, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
 import { getReports, compareReports } from "../services/api";
-import "./CompareReports.css";
+import {
+  BarChart2,
+  ArrowRight,
+  FileText,
+  Calendar,
+  AlertCircle,
+  CheckCircle2,
+  Loader,
+  ArrowLeftRight,
+  TrendingUp
+} from "lucide-react";
 
 export default function CompareReports({ user }) {
   const [reports, setReports] = useState([]);
@@ -272,45 +34,14 @@ export default function CompareReports({ user }) {
     }
   }
 
-  // async function handleCompare() {
-  //   if (!oldReport || !newReport) {
-  //     setError("Please select both reports to compare");
-  //     return;
-  //   }
-
-  //   if (oldReport.reportName === newReport.reportName && 
-  //       oldReport.reportType === newReport.reportType) {
-  //     setError("Please select two different reports");
-  //     return;
-  //   }
-
-  //   setLoading(true);
-  //   setError(null);
-
-  //   try {
-  //     const result = await compareReports(
-  //       oldReport.reportName,
-  //       oldReport.reportType,
-  //       newReport.reportName,
-  //       newReport.reportType,
-  //       user
-  //     );
-  //     setComparison(result.comparison);
-  //   } catch (err) {
-  //     setError(err.message);
-  //     console.error(err);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // }
-async function handleCompare() {
+  async function handleCompare() {
     if (!oldReport || !newReport) {
       setError("Please select both reports to compare");
       return;
     }
 
-    if (oldReport.reportName === newReport.reportName && 
-        oldReport.reportType === newReport.reportType) {
+    if (oldReport.reportName === newReport.reportName &&
+      oldReport.reportType === newReport.reportType) {
       setError("Please select two different reports");
       return;
     }
@@ -326,7 +57,7 @@ async function handleCompare() {
         newReportType: newReport.reportType,
         language: "en"
       };
-      
+
       const result = await compareReports(params, user);
       setComparison(result.comparison);
     } catch (err) {
@@ -336,6 +67,7 @@ async function handleCompare() {
       setLoading(false);
     }
   }
+
   const formatDate = (timestamp) => {
     if (!timestamp) return "Unknown date";
     try {
@@ -350,181 +82,183 @@ async function handleCompare() {
     }
   };
 
-  return (
-    <div className="compare-container">
-      {/* Info Banner */}
-      <div className="compare-info-banner">
-        <div className="banner-icon">📊</div>
-        <div className="banner-content">
-          <h3>Compare Medical Reports</h3>
-          <p>Track changes in your health parameters over time by comparing two reports of the same type</p>
+  const ReportSelectCard = ({ label, selected, onSelect, icon: Icon, colorClass }) => (
+    <div className="flex-1 min-w-[300px]">
+      <div className="flex items-center gap-2 mb-2">
+        <Icon className={`w-5 h-5 ${colorClass}`} />
+        <h3 className="font-semibold text-slate-700">{label}</h3>
+      </div>
+
+      <div className="relative group">
+        <select
+          value={selected ? `${selected.reportName}-${selected.reportType}` : ""}
+          onChange={(e) => {
+            if (e.target.value) {
+              const [name, type] = e.target.value.split("-");
+              const report = reports.find(
+                (r) => r.reportName === name && r.reportType === type
+              );
+              onSelect(report);
+              setError(null);
+            }
+          }}
+          className="w-full p-4 bg-white border border-slate-200 rounded-xl appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition-all shadow-sm group-hover:border-slate-300"
+        >
+          <option value="">Select a report...</option>
+          {reports.map((report, index) => (
+            <option
+              key={index}
+              value={`${report.reportName}-${report.reportType}`}
+            >
+              {report.reportName} ({report.reportType}) - {formatDate(report.createdAt)}
+            </option>
+          ))}
+        </select>
+
+        {/* Custom dropdown arrow */}
+        <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+          <ArrowRight className="w-4 h-4 rotate-90" />
         </div>
       </div>
 
-      {/* Selection Section */}
-      <div className="compare-selection-section">
-        <div className="selection-grid">
-          {/* Old Report Selection */}
-          <div className="report-selector">
-            <div className="selector-header">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                <polyline points="14 2 14 8 20 8"></polyline>
-              </svg>
-              <h4>Older Report</h4>
+      {selected && (
+        <div className="mt-4 p-4 bg-slate-50 rounded-xl border border-slate-100 animate-in fade-in slide-in-from-top-2 duration-300">
+          <div className="flex items-start gap-3">
+            <div className="p-2 bg-white rounded-lg shadow-sm">
+              <FileText className="w-5 h-5 text-slate-400" />
             </div>
-            <select
-              value={oldReport ? `${oldReport.reportName}-${oldReport.reportType}` : ""}
-              onChange={(e) => {
-                if (e.target.value) {
-                  const [name, type] = e.target.value.split("-");
-                  const report = reports.find(
-                    (r) => r.reportName === name && r.reportType === type
-                  );
-                  setOldReport(report);
-                  setError(null);
-                }
-              }}
-              className="report-select"
-            >
-              <option value="">Select older report...</option>
-              {reports.map((report, index) => (
-                <option
-                  key={index}
-                  value={`${report.reportName}-${report.reportType}`}
-                >
-                  {report.reportName} ({report.reportType}) - {formatDate(report.createdAt)}
-                </option>
-              ))}
-            </select>
-            {oldReport && (
-              <div className="selected-report-card">
-                <div className="report-card-icon">📋</div>
-                <div className="report-card-info">
-                  <strong>{oldReport.reportName}</strong>
-                  <span className="report-card-type">{oldReport.reportType}</span>
-                  <span className="report-card-date">{formatDate(oldReport.createdAt)}</span>
-                </div>
+            <div>
+              <p className="font-semibold text-slate-900">{selected.reportName}</p>
+              <div className="flex items-center gap-2 mt-1">
+                <span className="text-xs font-bold px-2 py-0.5 bg-slate-200 text-slate-600 rounded">
+                  {selected.reportType}
+                </span>
+                <span className="text-xs text-slate-500 flex items-center gap-1">
+                  <Calendar className="w-3 h-3" />
+                  {formatDate(selected.createdAt)}
+                </span>
               </div>
-            )}
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+
+  return (
+    <div className="max-w-5xl mx-auto space-y-8 pb-12">
+      {/* Header Banner */}
+      <div className="bg-gradient-to-r from-violet-600 to-indigo-600 rounded-2xl shadow-lg p-8 text-white">
+        <div className="flex items-start gap-4">
+          <div className="p-3 bg-white/10 rounded-xl backdrop-blur-sm">
+            <TrendingUp className="w-8 h-8 text-white" />
+          </div>
+          <div>
+            <h2 className="text-2xl font-bold">Compare Progress</h2>
+            <p className="text-indigo-100 mt-1 text-lg">
+              Track health changes by comparing two medical reports side by side.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Selection Area */}
+      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-8">
+        <div className="flex flex-col lg:flex-row gap-8 items-center">
+          <ReportSelectCard
+            label="Base Report (Old)"
+            selected={oldReport}
+            onSelect={setOldReport}
+            icon={Calendar}
+            colorClass="text-slate-500"
+          />
+
+          <div className="flex items-center justify-center">
+            <div className="p-3 bg-slate-50 rounded-full text-slate-300 rotate-90 lg:rotate-0">
+              <ArrowLeftRight className="w-6 h-6" />
+            </div>
           </div>
 
-          {/* Arrow */}
-          <div className="compare-arrow">
-            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <line x1="5" y1="12" x2="19" y2="12"></line>
-              <polyline points="12 5 19 12 12 19"></polyline>
-            </svg>
-          </div>
-
-          {/* New Report Selection */}
-          <div className="report-selector">
-            <div className="selector-header">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                <polyline points="14 2 14 8 20 8"></polyline>
-              </svg>
-              <h4>Newer Report</h4>
-            </div>
-            <select
-              value={newReport ? `${newReport.reportName}-${newReport.reportType}` : ""}
-              onChange={(e) => {
-                if (e.target.value) {
-                  const [name, type] = e.target.value.split("-");
-                  const report = reports.find(
-                    (r) => r.reportName === name && r.reportType === type
-                  );
-                  setNewReport(report);
-                  setError(null);
-                }
-              }}
-              className="report-select"
-            >
-              <option value="">Select newer report...</option>
-              {reports.map((report, index) => (
-                <option
-                  key={index}
-                  value={`${report.reportName}-${report.reportType}`}
-                >
-                  {report.reportName} ({report.reportType}) - {formatDate(report.createdAt)}
-                </option>
-              ))}
-            </select>
-            {newReport && (
-              <div className="selected-report-card">
-                <div className="report-card-icon">📋</div>
-                <div className="report-card-info">
-                  <strong>{newReport.reportName}</strong>
-                  <span className="report-card-type">{newReport.reportType}</span>
-                  <span className="report-card-date">{formatDate(newReport.createdAt)}</span>
-                </div>
-              </div>
-            )}
-          </div>
+          <ReportSelectCard
+            label="Comparison Report (New)"
+            selected={newReport}
+            onSelect={setNewReport}
+            icon={BarChart2}
+            colorClass="text-sky-500"
+          />
         </div>
 
         {error && (
-          <div className="error-message">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <circle cx="12" cy="12" r="10"></circle>
-              <line x1="12" y1="8" x2="12" y2="12"></line>
-              <line x1="12" y1="16" x2="12.01" y2="16"></line>
-            </svg>
+          <div className="mt-6 p-4 bg-red-50 border border-red-100 rounded-xl flex items-center justify-center gap-2 text-red-600 font-medium">
+            <AlertCircle className="w-5 h-5" />
             {error}
           </div>
         )}
 
-        <button
-          className="compare-btn"
-          onClick={handleCompare}
-          disabled={loading || !oldReport || !newReport}
-        >
-          {loading ? (
-            <>
-              <span className="loading-spinner"></span>
-              Comparing Reports...
-            </>
-          ) : (
-            <>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                <polyline points="14 2 14 8 20 8"></polyline>
-              </svg>
-              Compare Reports
-            </>
-          )}
-        </button>
+        <div className="mt-8 flex justify-center">
+          <button
+            onClick={handleCompare}
+            disabled={loading || !oldReport || !newReport}
+            className="flex items-center gap-2 px-8 py-3 bg-sky-600 text-white rounded-xl font-bold shadow-lg shadow-sky-500/20 hover:bg-sky-500 hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0"
+          >
+            {loading ? (
+              <>
+                <Loader className="w-5 h-5 animate-spin" />
+                Analyzing Difference...
+              </>
+            ) : (
+              <>
+                <ArrowLeftRight className="w-5 h-5" />
+                Compare Reports
+              </>
+            )}
+          </button>
+        </div>
       </div>
 
-      {/* Comparison Results */}
+      {/* Results Area */}
       {comparison && (
-        <div className="comparison-results">
-          <div className="results-header">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
-            </svg>
-            <h3>Comparison Analysis</h3>
+        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
+          <div className="p-6 border-b border-slate-100 bg-slate-50/50 flex items-center gap-3">
+            <div className="p-2 bg-emerald-100 text-emerald-600 rounded-lg">
+              <CheckCircle2 className="w-6 h-6" />
+            </div>
+            <h3 className="text-xl font-bold text-slate-800">Analysis Result</h3>
           </div>
-          <div className="comparison-content">
-            <ReactMarkdown>{comparison}</ReactMarkdown>
+          <div className="p-8">
+            <div className="prose prose-slate max-w-none prose-headings:text-slate-800 prose-headings:font-bold prose-p:text-slate-600 prose-strong:text-slate-900 prose-li:text-slate-600">
+              <ReactMarkdown>{comparison}</ReactMarkdown>
+            </div>
           </div>
         </div>
       )}
 
-      {/* Empty State */}
+      {/* Empty State / Tips */}
       {!comparison && !loading && (
-        <div className="compare-empty-state">
-          <div className="empty-icon">📊</div>
-          <h4>No Comparison Yet</h4>
-          <p>Select two reports above to see a detailed comparison analysis</p>
-          <div className="empty-tips">
-            <p><strong>Comparison Tips:</strong></p>
-            <ul>
-              <li>Choose reports of the same type for accurate comparison</li>
-              <li>Select an older report and a newer report</li>
-              <li>Review trends in your health parameters</li>
-            </ul>
-          </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {[
+            {
+              icon: "🎯",
+              title: "Consistency",
+              text: "Choose reports of the same type (e.g., both CBC) for accurate results"
+            },
+            {
+              icon: "📅",
+              title: "Timeline",
+              text: "Select an older report on the left and a newer one on the right"
+            },
+            {
+              icon: "📈",
+              title: "Trends",
+              text: "Look for improvements or concerning changes in your vital metrics"
+            }
+          ].map((tip, i) => (
+            <div key={i} className="bg-slate-50 p-6 rounded-xl border border-slate-100 text-center">
+              <div className="text-2xl mb-3">{tip.icon}</div>
+              <h4 className="font-bold text-slate-700 mb-2">{tip.title}</h4>
+              <p className="text-slate-500 text-sm leading-relaxed">{tip.text}</p>
+            </div>
+          ))}
         </div>
       )}
     </div>

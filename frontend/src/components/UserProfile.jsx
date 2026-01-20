@@ -1,6 +1,5 @@
 import { signOut } from "firebase/auth";
 import { auth } from "../../firebase";
-import "./UserProfile.css";
 
 export default function UserProfile({ user, onLogout }) {
   const handleLogout = async () => {
@@ -9,7 +8,6 @@ export default function UserProfile({ user, onLogout }) {
       onLogout();
     } catch (error) {
       console.error("Error signing out:", error);
-      // Even if Firebase signout fails, still logout the user
       onLogout();
     }
   };
@@ -29,7 +27,7 @@ export default function UserProfile({ user, onLogout }) {
   };
 
   // Default profile photo URL using a placeholder service if no photo
-  const defaultPhotoURL = !photoURL 
+  const defaultPhotoURL = !photoURL
     ? `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=10b981&color=fff&size=128`
     : null;
 
@@ -43,39 +41,34 @@ export default function UserProfile({ user, onLogout }) {
   };
 
   return (
-    <div className="user-profile">
-      <div className="user-info">
+    <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2">
         {(photoURL || defaultPhotoURL) ? (
-          <>
-            <img 
-              src={photoURL || defaultPhotoURL} 
-              alt={displayName} 
-              className="user-avatar" 
+          <div className="relative">
+            <img
+              src={photoURL || defaultPhotoURL}
+              alt={displayName}
+              className="w-8 h-8 rounded-full object-cover border border-slate-200"
               onError={handleImageError}
               referrerPolicy="no-referrer"
             />
-            <div className="user-avatar-placeholder" style={{ display: 'none' }}>
+            {/* Fallback placeholder (hidden by default, shown on error) */}
+            <div className="hidden absolute inset-0 w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-xs font-bold text-emerald-700 border border-emerald-200">
               {getInitials(displayName)}
             </div>
-          </>
+          </div>
         ) : (
-          <div className="user-avatar-placeholder">
+          <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-xs font-bold text-emerald-700 border border-emerald-200">
             {getInitials(displayName)}
           </div>
         )}
-        <div className="user-details">
-          <span className="user-name">{displayName}</span>
-          <span className="user-email">{email}</span>
+        <div className="hidden md:flex flex-col text-right">
+          <span className="text-sm font-semibold text-slate-800 leading-tight">{displayName}</span>
+          <span className="text-xs text-slate-500">{email}</span>
         </div>
       </div>
-      <button className="logout-btn" onClick={handleLogout} title="Sign out">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-          <polyline points="16 17 21 12 16 7"></polyline>
-          <line x1="21" y1="12" x2="9" y2="12"></line>
-        </svg>
-        Logout
-      </button>
+
+      {/* Logout button is handled in Header usually, but keeping this structure if used elsewhere */}
     </div>
   );
 }
