@@ -99,7 +99,6 @@ function App() {
           <SummaryView
             summary={summary}
             report={selectedReport}
-            onOpenChatbot={handleOpenChatbot}
           />
         </div>
       </div>
