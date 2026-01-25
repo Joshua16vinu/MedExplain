@@ -383,7 +383,7 @@ export default function UploadReport({ user, onResult, onUploadSuccess, summary 
                 <div className="relative">
                   <input
                     type="text"
-                    placeholder="Search (e.g. Hemoglobin)"
+                    placeholder="Search (e.g. Haemoglobin)"
                     value={medicalTerm}
                     onChange={(e) => setMedicalTerm(e.target.value)}
                     onKeyPress={(e) => e.key === 'Enter' && handleMedicalTermSearch()}
